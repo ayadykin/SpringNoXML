@@ -5,6 +5,10 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import com.ayadykin.hibernate.GenericDao;
 
@@ -22,7 +26,12 @@ public class GenericDaoHibernate<T, PK extends Serializable> implements
 
 	@Override
 	public List<T> getAll() {
-		return null;//this.getHibernateTemplate().loadAll(this.persistentClass);
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<T> cq = cb.createQuery(persistentClass);
+        Root<T> rootEntry = cq.from(persistentClass);
+        CriteriaQuery<T> all = cq.select(rootEntry);
+        TypedQuery<T> allQuery = entityManager.createQuery(all);
+        return allQuery.getResultList();
 	}
 
 	@Override
